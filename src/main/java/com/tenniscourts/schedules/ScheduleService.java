@@ -28,6 +28,9 @@ public class ScheduleService {
         if (createScheduleRequestDTO.getStartDateTime() == null) {
             throw new IllegalArgumentException("Start date and time not informed.");
         }
+        if (createScheduleRequestDTO.getStartDateTime().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Cannot add schedules for past dates.");
+        }
         TennisCourtDTO tennisCourtDTO = tennisCourtService.findTennisCourtById(tennisCourtId);
         Schedule schedule = new Schedule();
         schedule.setTennisCourt(tennisCourtMapper.map(tennisCourtDTO));
@@ -71,8 +74,12 @@ public class ScheduleService {
     }
 
     public boolean checkScheduleSlotExistsForTennisCourt(Long tennisCourtId, LocalDateTime start, LocalDateTime end) {
-        List<ScheduleDTO> schedules = findSchedulesByDates(start, end.minusSeconds(1L));
-        return schedules.stream().anyMatch(s -> s.getTennisCourt().getId().equals(tennisCourtId));
+        List<ScheduleDTO> schedules = findSchedulesByDates(start.minusHours(1L), start.plusHours(1L));
+        return schedules.stream().anyMatch(s -> {
+            boolean startIsBetweenIntervals = start.isEqual(s.getStartDateTime()) || ( start.isAfter(s.getStartDateTime()) && start.isBefore(s.getEndDateTime()));
+            boolean endIsBetweenIntervals = end.isAfter(s.getStartDateTime()) && end.isBefore(s.getEndDateTime());
+            return ( startIsBetweenIntervals || endIsBetweenIntervals ) && s.getTennisCourt().getId().equals(tennisCourtId);
+        });
     }
 
 }
