@@ -31,6 +31,7 @@ public class SwaggerConfig {
                 .tags(new Tag(GUEST_TAG, "Operations about guests"))
                 .tags(new Tag(TENNIS_COURT_TAG, "Operations about tennis courts"))
                 .tags(new Tag(SCHEDULE_TAG, "Operations about schedules"))
+                .tags(new Tag(RESERVATION_TAG, "Operations about reservation"))
                 .useDefaultResponseMessages(false);
     }
 
