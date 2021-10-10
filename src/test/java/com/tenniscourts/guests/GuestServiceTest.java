@@ -1,9 +1,6 @@
 package com.tenniscourts.guests;
 
 import com.tenniscourts.exceptions.EntityNotFoundException;
-import com.tenniscourts.reservations.CreateReservationRequestDTO;
-import com.tenniscourts.reservations.ReservationService;
-import com.tenniscourts.schedules.ScheduleDTO;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -16,7 +13,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
