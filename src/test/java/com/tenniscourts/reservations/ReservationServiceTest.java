@@ -253,4 +253,33 @@ public class ReservationServiceTest {
         assertEquals(new BigDecimal("10"),  reservationService.cancelReservation(1L).getRefundValue());
     }
 
+    @Test
+    public void rescheduleReservationToSameSlot() {
+        Schedule schedule = new Schedule();
+        schedule.setId(3L);
+
+        Reservation res = new Reservation();
+        res.setSchedule(schedule);
+
+        ScheduleDTO scheduleDTO = new ScheduleDTO();
+        scheduleDTO.setId(3L);
+        ReservationDTO reservationDTO = new ReservationDTO();
+        reservationDTO.setSchedule(scheduleDTO);
+
+        Optional<Reservation> reservation = Optional.of(res);
+
+        Mockito.when(reservationRepository.findById(1L)).thenReturn(reservation);
+        Mockito.when(reservationMapper.map(Mockito.any(ReservationDTO.class))).thenReturn(res);
+        Mockito.when(reservationMapper.map(Mockito.any(Reservation.class))).thenReturn(reservationDTO);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            reservationService.rescheduleReservation(1L, 3L);
+        });
+
+        String expectedMessage = "Cannot reschedule to the same slot.";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
 }

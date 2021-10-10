@@ -1,8 +1,8 @@
 package com.tenniscourts.tenniscourts;
 
 import com.tenniscourts.exceptions.EntityNotFoundException;
+import com.tenniscourts.schedules.ScheduleDTO;
 import com.tenniscourts.schedules.ScheduleService;
-import com.tenniscourts.tenniscourts.*;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -75,5 +75,24 @@ public class TennisCourtServiceTest {
         Mockito.when(tennisCourtRepository.saveAndFlush(Mockito.any(TennisCourt.class))).thenReturn(court);
 
         assertEquals("Tennis Court 1", tennisCourtService.addTennisCourt(tennisCourt).getName());
+    }
+
+    @Test
+    public void findTennisCourtWithSchedulesById() {
+        TennisCourt court = new TennisCourt();
+        court.setName("Tennis Court 1");
+
+        Optional<TennisCourt> tennisCourt = Optional.of(court);
+
+        ScheduleDTO scheduleDTO = new ScheduleDTO();
+        List<ScheduleDTO> scheduleDTOList = List.of(scheduleDTO);
+
+        Mockito.when(tennisCourtRepository.findById(1L)).thenReturn(tennisCourt);
+        Mockito.when(tennisCourtMapper.map(Mockito.any(TennisCourt.class))).thenCallRealMethod();
+
+        Mockito.when(scheduleService.findSchedulesByTennisCourtId(1L)).thenReturn(scheduleDTOList);
+
+        assertEquals(1, tennisCourtService.findTennisCourtWithSchedulesById(1L).getTennisCourtSchedules().size());
+
     }
 }
